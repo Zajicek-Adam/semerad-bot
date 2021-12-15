@@ -152,4 +152,4 @@ async def wtf(ctx):
     await ctx.send('https://imgur.com/gallery/JwrTxSl')
 
 
-client.run('53df479bd7bad8ab3f5576bcebe8392725a356596fc6434c08ddca53ff7c0a79')
+client.run('TOKEN');
