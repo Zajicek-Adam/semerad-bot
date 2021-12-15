@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import random
 from datetime import datetime
+import sched, time
 
 intents = discord.Intents(messages = True, guilds = True, reactions = True, members = True, presences = True)
 client = commands.Bot(command_prefix = '.', intents = intents, help_command=None)
@@ -9,10 +10,9 @@ client = commands.Bot(command_prefix = '.', intents = intents, help_command=None
 roasty = ('Jsi malá ubrečená píča, debile', 'Proč ztrácíš můj čas, plebe?', 'Nestojíš ani za roast.','Ty jsi tak těžký že ani pružinky z Lipra tě nezvednou (Generální partneři roastu jsou: Liper.)','Slabý kus')
 forcePasty = ('Did you ever hear the tragedy of Darth Plagueis The Wise? I thought not. It’s not a story the Jedi would tell you. It’s a Sith legend. Darth Plagueis was a Dark Lord of the Sith, so powerful and so wise he could use the Force to influence the midichlorians to create life… He had such a knowledge of the dark side that he could even keep the ones he cared about from dying. The dark side of the Force is a pathway to many abilities some consider to be unnatural. He became so powerful… the only thing he was afraid of was losing his power, which eventually, of course, he did. Unfortunately, he taught his apprentice everything he knew, then his apprentice killed him in his sleep. **Ironic.** He could save others from death, but not himself.' , 'The dark side of the Force is a pathway to many abilities some consider to be unnatural.', 'You wanna buy some deathsticks?')
 
-championsNames = ["Aatrox","Ahri","Akali","Alistar","Amumu","Anivia","Annie","Aphelios","Ashe","Aurelion Sol","Azir","Bard","Blitzcrank","Brand","Braum","Caitlyn","Camille","Cassiopeia","Cho'Gath","Corki","Darius","Diana","Dr. Mundo","Draven","Ekko","Elise","Evelynn","Ezreal","Fiddlesticks","Fiora","Fizz","Galio","Gangplank","Garen","Gnar","Gragas","Graves","Hecarim","Heimerdinger","Illaoi","Irelia","Ivern","Janna","Jarvan IV","Jax","Jayce","Jhin","Jinx","Kai'Sa","Kalista","Karma","Karthus","Kassadin","Katarina","Kayle","Kayn","Kennen","Kha'Zix","Kindred","Kled","Kog'Maw","LeBlanc","Lee Sin","Leona","Lillia","Lissandra","Lucian","Lulu","Lux","Malphite","Malzahar","Maokai","Master Yi","Miss Fortune","Mordekaiser","Morgana","Nami","Nasus","Nautilus","Neeko","Nidalee","Nocturne","Nunu and Willump","Olaf","Orianna","Ornn","Pantheon","Poppy","Pyke","Qiyana","Quinn","Rakan","Rammus","Rek'Sai","Rell","Renekton","Rengar","Riven","Rumble","Ryze","Samira","Sejuani","Senna","Seraphine","Sett","Shaco","Shen","Shyvana","Singed","Sion","Sivir","Skarner","Sona","Soraka","Swain","Sylas","Syndra","Tahm Kench","Taliyah","Talon","Taric","Teemo","Thresh","Tristana","Trundle","Tryndamere","Twisted Fate","Twitch","Udyr","Urgot","Varus","Vayne","Veigar","Vel'Koz","Vi","Viktor","Vladimir","Viego","Volibear","Warwick","Wukong","Xayah","Xerath","Xin Zhao","Yasuo","Yone","Yorick","Yuumi","Zac","Zed","Ziggs","Zilean","Zoe","Zyra"]
-championCosts = ["4800","4800","3150","1350","450","3150","450","6300","450","6300","4800","6300","3150","4800","4800","4800","6300","4800","1350","3150","4800","4800","450","4800","6300","4800","1350","3150","1350","4800","4800","3150","3150","450","4800","3150","4800","4800","3150","6300","4800","6300","1350","4800","1350","4800","6300","4800","6300","4800","3150","3150","3150","3150","450","6300","4800","4800","6300","6300","4800","3150","4800","4800","6300","4800","4800","4800","3150","1350","4800","4800","450","3150","1350","1350","4800","1350","4800","6300","3150","4800","450","3150","4800","6300","3150","450","6300","6300","4800","6300","1350","6300","6300","4800","4800","4800","4800","450","6300","4800","6300","6300","6300","3150","3150","3150","450","1350","450","4800","3150","450","4800","6300","4800","6300","6300","4800","1350","1350","4800","1350","3150","1350","1350","3150","1350","3150","4800","4800","1350","4800","4800","6300","4800","3150","3150","450","4800","6300","4800","1350","4800","6300","4800","6300","4800","4800","4800","1350","6300","4800"]
+championsNames = ["Aatrox","Ahri","Akali","Alistar","Amumu","Anivia","Annie","Aphelios","Ashe","Aurelion Sol","Azir","Bard","Blitzcrank","Brand","Braum","Caitlyn","Camille","Cassiopeia","Cho'gath","Corki","Darius","Diana","Dr. Mundo","Draven","Ekko","Elise","Evelynn","Ezreal","Fiddlesticks","Fiora","Fizz","Galio","Gangplank","Garen","Gnar","Gragas","Graves","Hecarim","Heimerdinger","Illaoi","Irelia","Ivern","Janna","Jarvan IV","Jax","Jayce","Jhin","Jinx","Kai'sa","Kalista","Karma","Karthus","Kassadin","Katarina","Kayle","Kayn","Kennen","Kha'zix","Kindred","Kled","Kog'maw","LeBlanc","Lee Sin","Leona","Lillia","Lissandra","Lucian","Lulu","Lux","Malphite","Malzahar","Maokai","Master Yi","Miss Fortune","Mordekaiser","Morgana","Nami","Nasus","Nautilus","Neeko","Nidalee","Nocturne","Nunu and Willump","Olaf","Orianna","Ornn","Pantheon","Poppy","Pyke","Qiyana","Quinn","Rakan","Rammus","Rek'sai","Rell","Renekton","Rengar","Riven","Rumble","Ryze","Samira","Sejuani","Senna","Seraphine","Sett","Shaco","Shen","Shyvana","Singed","Sion","Sivir","Skarner","Sona","Soraka","Swain","Sylas","Syndra","Tahm Kench","Taliyah","Talon","Taric","Teemo","Thresh","Tristana","Trundle","Tryndamere","Twisted Fate","Twitch","Udyr","Urgot","Varus","Vayne","Veigar","Vel'koz","Vi","Viego","Viktor","Vladimir","Volibear","Warwick","Wukong","Xayah","Xerath","Xin Zhao","Yasuo","Yone","Yorick","Yuumi","Zac","Zed","Ziggs","Zilean","Zoe","Zyra"]
+championCosts = ["4800","3150","3150","1350","450","3150","450","6300","450","6300","4800","6300","3150","4800","4800","4800","6300","4800","1350","3150","4800","4800","450","4800","6300","4800","1350","3150","1350","4800","4800","3150","3150","450","4800","3150","4800","4800","3150","6300","4800","6300","1350","4800","1350","4800","6300","4800","6300","4800","3150","3150","3150","3150","450","6300","4800","4800","6300","6300","4800","3150","4800","4800","6300","4800","4800","4800","3150","1350","4800","4800","450","3150","1350","1350","4800","1350","4800","6300","3150","4800","450","3150","4800","6300","3150","450","6300","6300","4800","6300","1350","6300","6300","4800","4800","4800","4800","450","6300","4800","6300","6300","6300","3150","3150","3150","450","1350","450","4800","3150","450","4800","6300","4800","6300","6300","4800","1350","1350","4800","1350","3150","1350","1350","3150","1350","3150","4800","4800","1350","4800","4800","6300","4800","3150","3150","450","4800","6300","4800","1350","4800","6300","4800","6300","4800","4800","4800","1350","6300","4800"]
 
-naive_utc_dt = datetime.utcnow()
 
 @client.event
 async def on_ready():
@@ -38,6 +38,14 @@ async def roast(ctx, user: discord.Member):
         await ctx.send(roast + user.mention)
 
 @client.command()
+async def insult(ctx, user:discord.Member, *, message=None):
+    i = random.randint(0, 4)
+    roast = roasty[i]
+    message = roast;
+    embed = discord.Embed(title=message);
+    await user.send(embed=embed)
+
+@client.command()
 async def force(ctx):
     i = random.randint(0, 2)
     pasta = forcePasty[i]
@@ -52,7 +60,7 @@ async def vasek(ctx, user: discord.Member):
 
 @client.command()
 async def help(ctx):
-    await ctx.send('```list všech příkazů \n .roast jméno(volitelné) | Dostaneš náhodný roast.    \n .vasek jmeno(volitelné) | Já fakt nevim proč jsem to přidal. \n .playlist | Pošle link na award winning playlist. \n .force | Pošle náhodnou Star Wars pastu. \n .pp jméno(volitelné) | Zjisti jak obdařen jsi ty, nebo někdo jiný. \n .doinb | DoinB copypasta z 2019 \n https://twitter.com/selfmade_LoL/status/1288949960298450944?s=20 \n .cas | Zobrazí čas u rudých sviní. \n .champ jmenoChampa | Napíše ti kolik stojí champ \n .had | Odhalí hada \n .amogus | Bacha na impostory *vtipné*```')
+    await ctx.send('```list všech příkazů \n .roast jméno(volitelné) | Dostaneš náhodný roast.    \n .vasek jmeno(volitelné) | Já fakt nevim proč jsem to přidal. \n .playlist | Pošle link na award winning playlist. \n .force | Pošle náhodnou Star Wars pastu. \n .pp jméno(volitelné) | Zjisti jak obdařen jsi ty, nebo někdo jiný. \n .doinb | DoinB copypasta z 2019 \n https://twitter.com/selfmade_LoL/status/1288949960298450944?s=20 \n .cas | Zobrazí čas u rudých sviní. \n .champ jmenoChampa | Napíše ti kolik stojí champ \n .had | Odhalí hada \n .amogus | Bacha na impostory *vtipné* \n .poggers | Fizi poggers```')
 
 @client.command()
 async def playlist(ctx):
@@ -83,9 +91,23 @@ async def doinb(ctx):
 
 @client.command()
 async def cas(ctx):
-    hours = naive_utc_dt.hour + 8
-    minutes = naive_utc_dt.minute
-    cas = 'Na Náměstí Nebeského klidu je nyní ' + str(hours) + ':' + str(minutes)
+    now = datetime.now()
+    hours = now.hour + 7
+    if(int(hours) >= 24):
+        offset = hours - 24
+        hours = 0
+        hours += offset
+    minutes = (now.minute)
+    if hours < 10:
+        hours = '0' + str(hours)
+    else:
+        hours = str(hours)
+    if minutes < 10:
+        minutes = '0' + str(minutes)
+    else:
+        minutes = str(minutes)
+    current_time =  hours + ':' + minutes 
+    cas = 'Na Náměstí Nebeského klidu je nyní ' + current_time
     await ctx.send(cas)
 
 @client.command()
@@ -97,6 +119,17 @@ async def champ(ctx, arg):
         arg = arg.capitalize()
         print(arg)
         if arg in championsNames:
+            if  arg in ["Kai'sa","Kog'maw", "Rek'sai", "Kha'zix", "Vel'koz", "Gho'gath"]:
+                if arg == "Kai'sa":
+                    arg = "Kai'Sa"
+                elif arg == "Kog'maw":
+                    arg = "Kog'Maw"
+                elif arg == "Cho'gath":
+                    arg = "Cho'Gath"
+                elif arg == "Kha'Zix":
+                    arg = "Vel'Koz"
+                else:
+                    arg ="Rek'Sai"
             await ctx.send('Champion ' + arg + ' stojí ' + str(championCosts[championsNames.index(arg)]) + ' BE')
         else:
             await ctx.send('Buď je dev debil a má špatně databási champů, nebo neumíš psát, vyber si.')
@@ -110,5 +143,13 @@ async def had(ctx):
     sam = '<@401475658800300062>'
     await ctx.send(sam)
 
+@client.command()
+async def poggers(ctx):
+    await ctx.send('https://youtu.be/TRsDgmNzo2w')
 
-client.run('')
+@client.command()
+async def wtf(ctx):
+    await ctx.send('https://imgur.com/gallery/JwrTxSl')
+
+
+client.run('53df479bd7bad8ab3f5576bcebe8392725a356596fc6434c08ddca53ff7c0a79')
