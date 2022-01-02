@@ -1,8 +1,8 @@
 import discord
+from discord.ext.commands import Bot
 from discord.ext import commands
-import random
-from datetime import datetime
-import sched, time
+import asyncio
+import time
 
 intents = discord.Intents(messages = True, guilds = True, reactions = True, members = True, presences = True)
 client = commands.Bot(command_prefix = '?', intents = intents, help_command=None)
@@ -30,8 +30,8 @@ async def on_member_remove(member):
 async def mail(ctx, user:discord.Member, *, message=None):
     i = random.randint(0, 4)
     messageToSend = messages[i] # Do not confuse message with messageToSend, messageToSend is created by me
-    message = messageToSend;
-    embed = discord.Embed(title=message);
+    message = messageToSend
+    embed = discord.Embed(title=message)
     await user.send(embed=embed)
 
 @client.command()
