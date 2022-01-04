@@ -1,4 +1,6 @@
 import discord
+import os
+import random
 from discord.ext.commands import Bot
 from discord.ext import commands
 import asyncio
@@ -15,7 +17,7 @@ newsletterId = 821505298463981608
 @client.event
 async def on_ready():
     print('Semerád jde semeradit!')
-    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Semeráding through life !help"))
+    await client.change_presence(activity=discord.Activity(type=discord.ActivityType.playing, name="Semeráding through life ?help"))
 @client.event
 async def on_member_join(member):
     channel = client.get_channel(newsletterId)
@@ -38,4 +40,4 @@ async def mail(ctx, user:discord.Member, *, message=None):
 async def help(ctx):
     await ctx.send('```list všech příkazů \n ')
 
-client.run('TOKEN')
+client.run(os.getenv('TOKEN'));
